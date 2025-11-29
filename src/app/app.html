@@ -1,0 +1,127 @@
+<mat-toolbar color="primary">
+  <span>Amazon Net Profit - Month End</span>
+  <span style="flex:1 1 auto"></span>
+
+  <button mat-icon-button (click)="downloadJSON()" title="Download JSON">
+    <mat-icon>download</mat-icon>
+  </button>
+
+  <label style="display:inline-block;" title="Upload JSON">
+    <input type="file" accept="application/json" (change)="uploadJSON($event)" style="display:none" />
+    <button mat-icon-button><mat-icon>upload</mat-icon></button>
+  </label>
+</mat-toolbar>
+
+<div class="app-container">
+  <mat-card>
+    <form (ngSubmit)="addOrUpdate()" [formGroup]="form" novalidate>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <mat-form-field appearance="outline" style="flex:2;min-width:200px">
+          <mat-label>Item name</mat-label>
+          <input matInput formControlName="name" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" style="width:120px">
+          <mat-label>Price</mat-label>
+          <input matInput type="number" formControlName="price" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" style="width:120px">
+          <mat-label>Cost</mat-label>
+          <input matInput type="number" formControlName="cost" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" style="width:140px">
+          <mat-label>Amazon fees</mat-label>
+          <input matInput type="number" formControlName="amazonFees" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" style="width:120px">
+          <mat-label>Sold</mat-label>
+          <input matInput type="number" formControlName="sold" />
+        </mat-form-field>
+
+        <div style="display:flex;align-items:center;gap:8px">
+          <button mat-raised-button color="primary" type="submit">Add / Update</button>
+          <button mat-button type="button" (click)="form.reset({id:'', name:'', price:0, cost:0, amazonFees:0, sold:0})">Clear</button>
+        </div>
+      </div>
+    </form>
+  </mat-card>
+
+  <mat-card style="margin-top:12px">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+      <mat-form-field appearance="outline" style="flex:1">
+        <mat-label>Search</mat-label>
+        <input matInput [(ngModel)]="search" name="search" />
+      </mat-form-field>
+
+      <button mat-stroked-button (click)="exportCSV()">Export CSV</button>
+    </div>
+
+    <!-- Show table only if there are items -->
+    <ng-container *ngIf="filteredItems().length; else noItems">
+     <table mat-table [dataSource]="filteredItems()" class="mat-elevation-z2" style="width:100%">
+
+    <!-- Name -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Item</th>
+      <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+      <td mat-footer-cell *matFooterCellDef style="font-weight:600">Totals</td>
+    </ng-container>
+
+    <ng-container matColumnDef="price">
+      <th mat-header-cell *matHeaderCellDef>Price</th>
+      <td mat-cell *matCellDef="let element">{{ element.price | number:'1.2-2' }}</td>
+      <!-- footer shows total revenue (price * sold) -->
+      <td mat-footer-cell *matFooterCellDef style="font-weight:600">{{ totalRevenue() | number:'1.2-2' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="cost">
+      <th mat-header-cell *matHeaderCellDef>Cost</th>
+      <td mat-cell *matCellDef="let element">{{ element.cost | number:'1.2-2' }}</td>
+      <td mat-footer-cell *matFooterCellDef style="font-weight:600">{{ totalCost() | number:'1.2-2' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="amazonFees">
+      <th mat-header-cell *matHeaderCellDef>Amazon Fees</th>
+      <td mat-cell *matCellDef="let element">{{ element.amazonFees | number:'1.2-2' }}</td>
+      <td mat-footer-cell *matFooterCellDef style="font-weight:600">{{ totalFees() | number:'1.2-2' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="sold">
+      <th mat-header-cell *matHeaderCellDef>Sold</th>
+      <td mat-cell *matCellDef="let element">{{ element.sold }}</td>
+      <td mat-footer-cell *matFooterCellDef style="font-weight:600">{{ totalSold() }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="profit">
+      <th mat-header-cell *matHeaderCellDef>Profit</th>
+      <td mat-cell *matCellDef="let element">{{ perItemProfit(element) | number:'1.2-2' }}</td>
+      <td mat-footer-cell *matFooterCellDef style="font-weight:700">{{ totalProfit() | number:'1.2-2' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let element">
+        <button mat-icon-button (click)="edit(element)" title="Edit"><mat-icon>edit</mat-icon></button>
+        <button mat-icon-button color="warn" (click)="remove(element)" title="Remove"><mat-icon>delete</mat-icon></button>
+      </td>
+      <!-- empty footer cell for actions column -->
+      <td mat-footer-cell *matFooterCellDef></td>
+    </ng-container>
+
+    <!-- header and data rows -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+    <!-- footer row (renders the mat-footer-cell for each column) -->
+    <tr mat-footer-row *matFooterRowDef="displayedColumns"></tr>
+  </table>
+    </ng-container>
+
+    <ng-template #noItems>
+      <div style="padding:12px;color:rgba(0,0,0,0.6)">No items to show. Add products above or upload a JSON.</div>
+    </ng-template>
+  </mat-card>
+</div>

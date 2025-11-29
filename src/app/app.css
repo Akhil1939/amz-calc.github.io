@@ -1,0 +1,9 @@
+.mat-footer-row {
+  border-top: 1px solid rgba(0,0,0,0.12);
+  background: rgba(0,0,0,0.02);
+}
+
+/* ensure footer cells use same padding/typography as header */
+.mat-footer-cell {
+  padding: 16px;
+}
