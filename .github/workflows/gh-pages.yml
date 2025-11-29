@@ -39,7 +39,7 @@ jobs:
           npm run build -- --output-path=dist/${{ env.PROJECT_NAME }} --configuration production --base-href "/${{ env.REPO_NAME }}/"
         env:
           PROJECT_NAME: 'cost'                                 # output folder name (dist/cost)
-          REPO_NAME: 'Amazone-profit-calculator'               # repo name -> used in base-href
+          REPO_NAME: 'amz-calc.github.io'               # repo name -> used in base-href
 
       - name: show dist contents
         run: |
