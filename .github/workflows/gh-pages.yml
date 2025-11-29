@@ -47,7 +47,7 @@ jobs:
           ls -la
           if [ -d "dist" ]; then
             echo "dist directory:"
-            ls -la dist
+            ls -la dist || true
             ls -la dist/cost || true
           else
             echo "No dist directory found"
