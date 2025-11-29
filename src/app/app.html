@@ -6,10 +6,17 @@
     <mat-icon>download</mat-icon>
   </button>
 
-  <label style="display:inline-block;" title="Upload JSON">
-    <input type="file" accept="application/json" (change)="uploadJSON($event)" style="display:none" />
-    <button mat-icon-button><mat-icon>upload</mat-icon></button>
-  </label>
+<input
+  type="file"
+  accept="application/json"
+  #fileInput
+  (change)="uploadJSON($event)"
+  style="display: none"
+/>
+
+<button mat-icon-button (click)="fileInput.click()" title="Upload JSON">
+  <mat-icon>upload</mat-icon>
+</button>
 </mat-toolbar>
 
 <div class="app-container">

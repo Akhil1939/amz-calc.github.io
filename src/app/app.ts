@@ -175,6 +175,7 @@ export class App {
             p.sold = Number(p.sold) || 0;
             if (!p.id) p.id = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
           });
+          console.log('Uploading items', data);
           this.items.set(data);
           this.saveLocal();
         } else {
