@@ -41,6 +41,18 @@ jobs:
           PROJECT_NAME: 'cost'                                 # output folder name (dist/cost)
           REPO_NAME: 'Amazone-profit-calculator'               # repo name -> used in base-href
 
+      - name: Debug: show dist contents
+        run: |
+          echo "present working dir: $(pwd)"
+          ls -la
+          if [ -d "dist" ]; then
+            echo "dist directory:" && ls -la dist || true
+            ls -la dist/${{ env.PROJECT_NAME }} || true
+          else
+            echo "No dist directory found"
+            exit 1
+          fi
+
       - name: Deploy to GitHub Pages (peaceiris)
         uses: peaceiris/actions-gh-pages@v3
         with:
