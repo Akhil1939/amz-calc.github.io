@@ -1,0 +1,47 @@
+name: build-and-deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Angular app (production)
+        run: |
+          npm run build -- --output-path=dist/${{ env.PROJECT_NAME }} --configuration production --base-href "https://${{ env.GH_PAGES_HOST }}/"
+        env:
+          PROJECT_NAME: 'cost'
+          GH_PAGES_HOST: 'Akhil1939.github.io/Amazone-profit-calculator'
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          publish_dir: ./dist/cost
+          github_token: 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
